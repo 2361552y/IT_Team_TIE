@@ -58,12 +58,18 @@ public class Player {
 		return c;
 	}
 	
+	/**
+	 * Check whether the player is failed.
+	 */
 	public void check() {
 		if(playerCards.size() == 0) {
 			failed = true;
 		}
 	}
 
+	/**
+	 * Reverse the sequence of cards.
+	 */
 	public void reverseCards() {
 		Collections.reverse(playerCards);
 	}
