@@ -16,3 +16,4 @@ ps:
 1.把 "commandline"包里的所有文件  拷到eclipse项目里,
 2.把根目录里 **除了文件夹外的*** 所有单个文件拷进去项目根目录
 3.JDBC: import JUnit 那一行报错的话就删掉.
+4.覆盖TopTrumps.java
