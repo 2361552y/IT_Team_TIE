@@ -3,8 +3,6 @@ package commandline;
 import java.sql.*;
 import java.text.DecimalFormat;
 
-import org.junit.Test;
-
 public class JDBC {
 	
 	static Connection connection = null;
