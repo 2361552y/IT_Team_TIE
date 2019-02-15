@@ -7,6 +7,7 @@ public class Player {
 	int playerID;
 	ArrayList<Card> playerCards = new ArrayList<Card>();
 	private static int InitialID = 1;
+	int countWinRounds = 0;
 	boolean failed = false;
 
 	public Player(ArrayList<Card> playerCards) {
@@ -23,6 +24,10 @@ public class Player {
 	}
 	public int getPlayerID() {
 		return playerID;
+	}
+
+	public int getCountWinRounds() {
+		return countWinRounds;
 	}
 
 	public void setPlayerID(int playerID) {
@@ -49,7 +54,7 @@ public class Player {
 		InitialID = 1;
 	}
 
-	public Card drawCard() {
+	public Card provideCard() {
 		Card c = playerCards.remove(0);
 //		if(playerID == 1) {
 			System.out.println("Player " + playerID + ", Your card drawn is " + c.toString());
@@ -62,6 +67,7 @@ public class Player {
 	 * Check whether the player is failed.
 	 */
 	public void check() {
+		System.out.println("----------Player " + playerID + " has " + playerCards.size() + " cards left.");
 		if(playerCards.size() == 0) {
 			failed = true;
 		}
@@ -72,5 +78,9 @@ public class Player {
 	 */
 	public void reverseCards() {
 		Collections.reverse(playerCards);
+	}
+
+	public void recordWin() {
+		countWinRounds++;
 	}
 }

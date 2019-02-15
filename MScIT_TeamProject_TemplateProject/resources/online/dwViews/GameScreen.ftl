@@ -25,6 +25,7 @@
     	<div class="container">
 
 			<!-- Add your HTML Here -->
+			<b>This is the game screen!</b>
 		
 		</div>
 		
@@ -75,6 +76,8 @@
 		</script>
 		
 		<!-- Here are examples of how to call REST API Methods -->
+		
+		
 		<script type="text/javascript">
 		
 			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
