@@ -25,7 +25,38 @@
     	<div class="container">
 
 			<!-- Add your HTML Here -->
-		
+		<div class="Top">
+				<div class="row">
+					<div class="col-sm-2 col-md-2 "></div>
+					<div class="col-sm-8 col-md-8 " style="background-color: black;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #9e7d86;">
+						<p><ul class="nav nav-tabs"><li class="active"><a href="#">Top trumps game</a></li></ul></p>
+					</div>
+					<div class="col-sm-2 col-md-2 "></div>
+				</div>
+
+			</div>
+			<!--selection-->
+			<br />
+			<div class="Middle">
+				<div class="row">
+					
+					<div class="col-sm-2 col-md-2 "></div>
+					<!--new game-->
+					<div class="col-sm-4 col-md-4 ">
+						<div class="list-group">
+							<a href="http://localhost:7777/toptrumps/game" class="list-group-item active">New game</a>
+							<a href="http://localhost:7777/toptrumps/game" class="list-group-item">Start a new Top Trump game.</a>
+						</div>
+					</div>
+					<!--Game statistics-->
+					<div class="col-sm-4 col-md-4 ">
+						<div class="list-group">
+							<a href="http://localhost:7777/toptrumps/stats" class="list-group-item active">Game Statistics</a>
+							<a href="http://localhost:7777/toptrumps/stats" class="list-group-item">Get statistics from past games.</a>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		
 		<script type="text/javascript">
@@ -38,8 +69,8 @@
 				// --------------------------------------------------------------------------
 				
 				// For example, lets call our sample methods
-				helloJSONList();
-				helloWord("Student");
+				// helloJSONList();
+				// helloWord("Student");
 				
 			}
 			
@@ -47,79 +78,79 @@
 			// Add your other Javascript methods Here
 			// -----------------------------------------
 		
-			// This is a reusable method for creating a CORS request. Do not edit this.
-			function createCORSRequest(method, url) {
-  				var xhr = new XMLHttpRequest();
-  				if ("withCredentials" in xhr) {
+			<#--// This is a reusable method for creating a CORS request. Do not edit this.-->
+			<#--function createCORSRequest(method, url) {-->
+  				<#--var xhr = new XMLHttpRequest();-->
+  				<#--if ("withCredentials" in xhr) {-->
 
-    				// Check if the XMLHttpRequest object has a "withCredentials" property.
-    				// "withCredentials" only exists on XMLHTTPRequest2 objects.
-    				xhr.open(method, url, true);
+    				<#--// Check if the XMLHttpRequest object has a "withCredentials" property.-->
+    				<#--// "withCredentials" only exists on XMLHTTPRequest2 objects.-->
+    				<#--xhr.open(method, url, true);-->
 
-  				} else if (typeof XDomainRequest != "undefined") {
+  				<#--} else if (typeof XDomainRequest != "undefined") {-->
 
-    				// Otherwise, check if XDomainRequest.
-    				// XDomainRequest only exists in IE, and is IE's way of making CORS requests.
-    				xhr = new XDomainRequest();
-    				xhr.open(method, url);
+    				<#--// Otherwise, check if XDomainRequest.-->
+    				<#--// XDomainRequest only exists in IE, and is IE's way of making CORS requests.-->
+    				<#--xhr = new XDomainRequest();-->
+    				<#--xhr.open(method, url);-->
 
- 				 } else {
+ 				 <#--} else {-->
 
-    				// Otherwise, CORS is not supported by the browser.
-    				xhr = null;
+    				<#--// Otherwise, CORS is not supported by the browser.-->
+    				<#--xhr = null;-->
 
-  				 }
-  				 return xhr;
-			}
+  				 <#--}-->
+  				 <#--return xhr;-->
+			<#--}-->
 		
-		</script>
+		<#--</script>-->
 		
-		<!-- Here are examples of how to call REST API Methods -->
-		<script type="text/javascript">
+		<#--<!-- Here are examples of how to call REST API Methods &ndash;&gt;-->
+		<#--<script type="text/javascript">-->
 		
-			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
-			function helloJSONList() {
-			
-				// First create a CORS request, this is the message we are going to send (a get request in this case)
-				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloJSONList"); // Request type and URL
-				
-				// Message is not sent yet, but we can check that the browser supports CORS
-				if (!xhr) {
-  					alert("CORS not supported");
-				}
+			// // This calls the helloJSONList REST method from TopTrumpsRESTAPI
+			// function helloJSONList() {
+			//
+			// 	// First create a CORS request, this is the message we are going to send (a get request in this case)
+			// 	var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloJSONList"); // Request type and URL
+			//
+			// 	// Message is not sent yet, but we can check that the browser supports CORS
+			// 	if (!xhr) {
+  			// 		alert("CORS not supported");
+			// 	}
+			//
+			// 	// CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
+			// 	// to do when the response arrives
+			// 	xhr.onload = function(e) {
+ 			// 		var responseText = xhr.response; // the text of the response
+			// 		alert(responseText); // lets produce an alert
+			// 	};
+			//
+			// 	// We have done everything we need to prepare the CORS request, so send it
+			// 	xhr.send();
+			// }
 
-				// CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
-				// to do when the response arrives 
-				xhr.onload = function(e) {
- 					var responseText = xhr.response; // the text of the response
-					alert(responseText); // lets produce an alert
-				};
-				
-				// We have done everything we need to prepare the CORS request, so send it
-				xhr.send();		
-			}
-			
-			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
-			function helloWord(word) {
-			
-				// First create a CORS request, this is the message we are going to send (a get request in this case)
-				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloWord?Word="+word); // Request type and URL+parameters
-				
-				// Message is not sent yet, but we can check that the browser supports CORS
-				if (!xhr) {
-  					alert("CORS not supported");
-				}
-
-				// CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
-				// to do when the response arrives 
-				xhr.onload = function(e) {
- 					var responseText = xhr.response; // the text of the response
-					alert(responseText); // lets produce an alert
-				};
-				
-				// We have done everything we need to prepare the CORS request, so send it
-				xhr.send();		
-			}
+			// // This calls the helloJSONList REST method from TopTrumpsRESTAPI
+			// function helloWord(word) {
+			//
+			// 	// First create a CORS request, this is the message we are going to send (a get request in this case)
+			// 	var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloWord?Word="+word); // Request type and URL+parameters
+			//
+			// 	// Message is not sent yet, but we can check that the browser supports CORS
+			// 	if (!xhr) {
+  			// 		alert("CORS not supported");
+			// 	}
+			//
+			// 	// CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
+			// 	// to do when the response arrives
+			// 	xhr.onload = function(e) {
+ 			// 		var responseText = xhr.response; // the text of the response
+			// 		alert(responseText); // lets produce an alert
+			// 	};
+			//
+			// 	// We have done everything we need to prepare the CORS request, so send it
+			// 	xhr.send();
+			// }
 
 		</script>
 		

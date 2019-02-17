@@ -1,5 +1,6 @@
 package commandline;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -54,11 +55,11 @@ public class Player {
 		InitialID = 1;
 	}
 
-	public Card provideCard() {
+	public Card provideCard() throws IOException {
 		Card c = playerCards.remove(0);
 //		if(playerID == 1) {
-			System.out.println("Player " + playerID + ", Your card drawn is " + c.toString());
-			System.out.println("There are " + playerCards.size() + " cards in your deck.");
+			Controller.output("Player " + playerID + ", Your card drawn is " + c.toString());
+			Controller.output("There are " + playerCards.size() + " cards in your deck.");
 //		}
 		return c;
 	}
@@ -66,8 +67,8 @@ public class Player {
 	/**
 	 * Check whether the player is failed.
 	 */
-	public void check() {
-		System.out.println("----------Player " + playerID + " has " + playerCards.size() + " cards left.");
+	public void check() throws IOException {
+		Controller.output("----------Player " + playerID + " has " + getPlayerCards().size() + " cards left.");
 		if(playerCards.size() == 0) {
 			failed = true;
 		}
@@ -82,5 +83,25 @@ public class Player {
 
 	public void recordWin() {
 		countWinRounds++;
+	}
+
+	public String cardLeft() {
+		String s = "";
+		switch (getPlayerID()){
+			case 1:
+				if(!isFailed()){
+					s = "Your have " + getPlayerCards().size() + " cards left.";
+				}else {
+					s = "You lost!";
+				}
+				return  s;
+			default:
+				if(!isFailed()){
+					s = "AI Player " + (playerID-1) + " has " +getPlayerCards().size()+ " cards left.";
+				}else {
+					s = "AI Player lost!";
+				}
+				return  s;
+		}
 	}
 }

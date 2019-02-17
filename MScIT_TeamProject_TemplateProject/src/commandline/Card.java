@@ -37,6 +37,10 @@ public class Card {
 			this.cargo = cargo;
 		}
 
+	public int getCardID() {
+		return cardID;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -95,6 +99,17 @@ public class Card {
 				"   > cargo:" + cargo;
 	}
 
+	public String[] cardToString(){
+		String[] card = new String[7];
+		card[0] = cardID + "";
+		card[1] = description;
+		card[2] = size + "";
+		card[3] = speed + "";
+		card[4] = range + "";
+		card[5] = firepower + "";
+		card[6] = cargo + "";
+		return card;
+	}
 	// To reset InitialID.
 	public static void resetID() {
 		InitialID = 1;

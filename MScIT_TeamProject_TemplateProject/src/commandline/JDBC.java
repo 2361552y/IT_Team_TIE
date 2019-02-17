@@ -28,24 +28,24 @@ public class JDBC {
 		
 		ResultSet rs = statement.executeQuery(sql1);
 		rs.next();
-		history.setNumberOfGames(rs.getInt("numberOfGames"));
+		history.setNumberOfGames(rs.getInt("numberofgames"));
 		
 		rs = statement.executeQuery(sql2);
 		rs.next();
-		history.setNumberOfHumanWins(rs.getInt("numberOfHumanWins"));
+		history.setNumberOfHumanWins(rs.getInt("numberofhumanWins"));
 		
 		rs = statement.executeQuery(sql3);
 		rs.next();
-		history.setNumberOfAIWins(rs.getInt("numberOfAIWins"));
+		history.setNumberOfAIWins(rs.getInt("numberofaiwins"));
 		
 		rs = statement.executeQuery(sql4);
 		rs.next();
-		double d = rs.getDouble("averageNumberOfDraws");
+		double d = rs.getDouble("averagenumberofdraws");
 		history.setAverageNumberOfDraws(new DecimalFormat("0.0").format(d));
 		
 		rs = statement.executeQuery(sql5);
 		rs.next();
-		history.setLongestGame(rs.getInt("longestGame"));
+		history.setLongestGame(rs.getInt("longestgame"));
 		
 		return history;
 	}

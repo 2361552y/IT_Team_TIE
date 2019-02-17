@@ -1,5 +1,7 @@
 package commandline;
 
+import java.util.ArrayList;
+
 public class HistoryStatistics {
 
 	private int numberOfGames;
@@ -27,7 +29,7 @@ public class HistoryStatistics {
 				"   Number of Human Wins: " + numberOfHumanWins + "\r\n" + 
 				"   Number of AI Wins: "+ numberOfAIWins + "\r\n" + 
 				"   Average number of Draws: " + averageNumberOfDraws + "\r\n" + 
-				"   Longest Game: "+ numberOfGames;
+				"   Longest Game: "+ longestGame;
 	}
 	
 	//getters and setters

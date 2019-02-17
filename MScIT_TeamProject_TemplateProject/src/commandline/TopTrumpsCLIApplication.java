@@ -20,7 +20,7 @@ public class TopTrumpsCLIApplication {
 		try {
 			if (args[0].equalsIgnoreCase("true")) {
 				writeGameLogsToFile=true; // Command line selection
-				TestLog.preparation();
+				View.preparation();
 			}
 		
 			// State
@@ -50,8 +50,9 @@ public class TopTrumpsCLIApplication {
 					}
 				}else if(s.equals("2")){
 					String[] commandArgs = {String.valueOf(writeGameLogsToFile)};
+					Controller.output("----New Game Starts!");
 					try {
-						TopTrumpsCommandLineVersion.main(commandArgs);
+						Controller.main(commandArgs);
 					} catch (Exception e) {
 						System.err.println("Sorry! Error!");
 						e.printStackTrace();
@@ -70,7 +71,7 @@ public class TopTrumpsCLIApplication {
 		} finally {
 			try {
 				JDBC.closeConnection();
-				TestLog.close();
+				View.close();
 			} catch (SQLException e) {
 				System.err.println("Failed to close JDBC!");
 				e.printStackTrace();
@@ -84,7 +85,7 @@ public class TopTrumpsCLIApplication {
 	private static void output(String s) throws IOException {
 		System.out.println(s);
 		if(writeGameLogsToFile) {
-			TestLog.write(s);
+			View.write(s);
 		}
 	}
 

@@ -3,194 +3,349 @@ package commandline;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-/**
- * BondModel is the modelling of storing data into ArrayList of a class after
- * reading the File provided.
- * 
- * @author 33101
- *
- */
 public class Model {
 
-	String[] header; // The headers in .txt document.
-	int numberOfPlayers; // Number of Players.
-	// ArrayList for storing Cards.
-	ArrayList<Card> cards = new ArrayList<Card>();
-	// ArrayList for storing Players.
-	ArrayList<Player> players = new ArrayList<Player>();
-	// ArrayList for storing communal Cards.
-	ArrayList<Card> communalPile = new ArrayList<Card>();
-	// ArrayList for storing round Cards.
-	ArrayList<Card> roundPile = new ArrayList<Card>();
-	int round = 0;
-	int comboRound = 0;
-	int totalRound;
+    String[] header; // The headers in .txt document.
 
-	int winnerIndex = -1;
-	int initialPlayerIndex = new Random().nextInt(numberOfPlayers - 1);
-	int currentPlayerIndex = initialPlayerIndex;
+    int numberOfPlayers; // Number of Players.
 
-	/**
-	 * Constructor
-	 * 
-	 * @throws Exception
-	 */
-	public Model(int numberOfPlayers) throws Exception {
-		// preparing
-		this.numberOfPlayers = numberOfPlayers;
-		for (int i = 0; i < numberOfPlayers; i++) {
-			players.add(new Player());
-		}
-		getCards();
-		distributeCards();
+    /*
+     * ArrayList for storing Cards.
+     */
+    ArrayList<Card> cards = new ArrayList<Card>();
+    ArrayList<Player> players = new ArrayList<Player>();
+    ArrayList<Player> gamedPlayers = new ArrayList<Player>();
+    ArrayList<Card> communalPile = new ArrayList<Card>();
+    ArrayList<Card> roundPile = new ArrayList<Card>();
 
-		// processing
-		while (this.numberOfPlayers > 1) {
-			round();
-			check();
-		}
+    /*
+     * round counters.
+     */
+    int basicRound = 0;
+    int comboRound = 0;
+    int totalCombos = 0;
+    int drawCount = 0;
+    int totalRound;
 
-		// ending
-		totalRound = round + comboRound;
+    /*
+     * indexes recorder.
+     */
+    int winnerIndex;
+    int initialPlayerIndex;
+    int currentPlayerIndex;
 
-	}
+    /*
+     * flags.
+     */
+    boolean ended = false;
+    boolean equaled = false;
+    boolean combo = false;
 
-	private void check() {
-		for (Player p : players) {
-			p.check();
-			if (p.isFailed()) {
-				players.remove(p);
-			}
-		}
-		numberOfPlayers = players.size();
-	}
+    //Test log or not.
+    boolean writeGameLogsToFile = false;
 
-	private void round() {
-		currentPlayerIndex = ((round++ % numberOfPlayers) + initialPlayerIndex) % numberOfPlayers;
-		int character;
-		do {
-			comboRound++;
-			switch (currentPlayerIndex) {
-			case 0:
-				character = decideCharacter();
-				break;
-			default:
-				character = new Random().nextInt(4) + 1;
-			}
-			compare(character);
-		} while (winnerIndex == currentPlayerIndex);
-		comboRound--;
-	}
+    public Model(boolean logFlag, int numberOfPlayers) throws Exception {
+        writeGameLogsToFile = logFlag;
+        this.numberOfPlayers = numberOfPlayers;
+    }
 
-	private void compare(int character) {
-		int max = -1;
-		for (Player p : players) {
-			Card drawnCard = p.drawCard();
-			roundPile.add(drawnCard);
-			int value = getCharacterValue(drawnCard, character);
-			if (max < value) {
-				max = value;
-				winnerIndex = p.getPlayerID() - 1;
-			} else if (max == value) {
-				communalPile.add(drawnCard);
-			}
-			if(p.getPlayerID() == numberOfPlayers) {
-				return;
-			}
-		}
-		Player winner = players.get(winnerIndex);
-		for(Card c : roundPile) {
-			winner.addCard(c);
-		}
-		if(communalPile.size() != 0) {
-			for(Card c : communalPile) {
-				winner.addCard(c);
-			}
-		}
-			
+    public Model(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
+    }
 
-	}
+    public void end() throws IOException, SQLException, ClassNotFoundException {
+        /*
+         *  Game ending.
+         */
+        Controller.output("----------Game Over!----------");
+        Controller.output("----Player " + players.get(0).getPlayerID() + " won the game! " + players.get(0).getPlayerCards().size() + " cards in total!");
+        GameStatistics gs = new GameStatistics(totalRound, drawCount, gamedPlayers);
+        Controller.output(gs.toString());
 
-	private int getCharacterValue(Card drawnCard, int character) {
-		switch (character) {
-		case 1:
-			return drawnCard.getSize();
-		case 2:
-			return drawnCard.getSpeed();
-		case 3:
-			return drawnCard.getRange();
-		case 4:
-			return drawnCard.getFirepower();
-		default:
-			return drawnCard.getCargo();
-		}
-	}
+        //update database
+        if (JDBC.updateDatabase(gs) != 0) {
+            Controller.output("----------Database Updated!----------");
+        }
+    }
 
-	private int decideCharacter() {
-		Scanner s = new Scanner(System.in);
-		return s.nextInt();
-	}
+    public void prepare() throws Exception {
+        /*
+         * Data initializing.
+         */
+        initialPlayerIndex = new Random().nextInt(numberOfPlayers);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            players.add(new Player());
+        }
+        Controller.output("number of players: " + players.size());
+        /*
+         * Game preparing.
+         */
+        getCards();
+        Controller.output("----------Cards loaded!----------");
 
-	private void distributeCards() {
-		int count = 0;
-		for (int i = 0; i < cards.size(); i++) {
-			int cardIndex = new Random().nextInt(cards.size() - count);
-			players.get(count % numberOfPlayers).addCard(cards.remove(cardIndex));
-			count++;
-		}
-	}
+        allocateCards();
+        Controller.output("----------Cards allocated!----------");
+    }
 
-	/**
-	 * Read the .txt document, get all cards and store them into ArrayList.
-	 * 
-	 * @throws Exception
-	 */
-	private void getCards() throws Exception {
-		BufferedReader br = new BufferedReader(new FileReader(new File("/TopTrumpsOfTIE/StarCitizenDeck.txt")));
+    private void check() throws IOException {
+        boolean hasFailure = false;
+        for (Player p : players) {
+            p.check();
+            if (p.isFailed()) {
+                hasFailure = true;
+                gamedPlayers.add(p);
+                Controller.output("----Sorry, Player " + p.getPlayerID() + " without any card lost the game!");
+            }
+        }
+        for (Player p : gamedPlayers) {
+            players.remove(p);
+        }
+        if (hasFailure) {
+            numberOfPlayers = players.size();
+            Controller.output("----There are/is " + numberOfPlayers + " player(s) survived.");
+        }
+        if (numberOfPlayers == 1) {
+            gamedPlayers.add(players.get(0));
+            ended = true;
+        }
+    }
 
-		// Store the readings.
-		String s = "";
+    public void round() throws IOException {
+        compRoundInfo();
+        process();
+    }
 
-		// Jump over the Header Line.
-		s = br.readLine();
+    public void compRoundInfo() throws IOException {
+        /*
+         * If not combo or not equaled, reset the currentPlayerIndex.
+         * Else if combo, show combo congratulations.
+         * Else if equaled, inform with draw.
+         */
+        if (!equaled && !combo) {
+            currentPlayerIndex = ((basicRound++ % numberOfPlayers) + initialPlayerIndex) % numberOfPlayers;
+            comboRound = 0;
+        } else if (!equaled && combo) {
+            comboRound++;
+            totalCombos++;
+            Controller.output("----Player " + (currentPlayerIndex + 1) + " has the win combo for " + comboRound + " times!");
+        } else if (equaled) {
+            drawCount++;
+        }
+        totalRound = basicRound + drawCount + totalCombos;
+        Controller.output("-------------------------------------------------------------------");
+        Controller.output("---------- Round " + totalRound + " ! ----------");
+        if (combo || equaled) {
+            Controller.output("----Player " + (currentPlayerIndex + 1) + " keeps determining the character.");
+        }
+        equaled = false;
 
-		header = s.split(" ");
+        Controller.output("----Player " + (currentPlayerIndex + 1) + " is to determine a character.");
+    }
+    private void process() throws IOException {
+        provideCards();
+        int character = determineCharacter();
+        compare(character);
+        check();
+    }
 
-		// Read the data, generate the Bond and store into ArrayList.
-		while ((s = br.readLine()) != null) {
-			cards.add(new Card(s));
-		}
-	}
+    public void provideCards() throws IOException {
+        for (Player p : players) {
+            Card providedCard = p.provideCard();
+            roundPile.add(providedCard);
+        }
+        Controller.output("----------Round cards provided.----------");
+    }
 
-	/**
-	 * Get the Bond trade from ArrayList by search its ID.
-	 * 
-	 * @param ID, bondID
-	 * @return the certain Bond trade details.
-	 */
-	public Card getCardsByID(int ID) {
-		return cards.get(ID - 1);
-	}
+    public ArrayList<Card> getRoundPile(){
+        return roundPile;
+    }
 
-	/**
-	 * Get the header in the .csv document.
-	 * 
-	 * @return header.
-	 */
-	public String[] getHeader() {
-		return header;
-	}
+    private int determineCharacter() throws IOException {
+        int character;
+        if (players.get(currentPlayerIndex).getPlayerID() == 1) {
+            character = decideCharacter();
+        } else {
+            character = new Random().nextInt(5) + 1;
+        }
+        Controller.output("----Character " + character + " is chosen!");
+        return character;
+    }
 
-	/**
-	 * Get the bonds ArrayList.
-	 * 
-	 * @return bonds.
-	 */
-	public ArrayList<Card> getBondsArray() {
-		return cards;
-	}
+    private void compare(int character) throws IOException {
+        int initialValue = getCharacterValue(roundPile.get(currentPlayerIndex), character);
+        int max = initialValue;
+        winnerIndex = currentPlayerIndex;
+        ArrayList<Integer> winnersIndexes = new ArrayList<Integer>();
+        for (int i = 0; i < roundPile.size(); i++) {
+            int value = getCharacterValue(roundPile.get(i), character);
+            if (max < value) {
+                max = value;
+            }
+        }
+        for (int i = 0; i < roundPile.size(); i++) {
+            int value = getCharacterValue(roundPile.get(i), character);
+            if (max == value) {
+                winnersIndexes.add(i);
+            }
+        }
+        if (winnersIndexes.size() > 1) {
+            equaled = true;
+            for (Card c : roundPile) {
+                communalPile.add(c);
+            }
+            roundPile.clear();
+            Controller.output("----There are " + winnersIndexes.size() + " cards are both the maximum on the character!");
+            Controller.output("----All cards on the table are going to the cummunal pile!");
+            Controller.output("----Now, the cummunal pile has " + communalPile.size() + " cards.");
+            Controller.output("----It was a draw!");
+            return;
+        } else {
+            winnerIndex = winnersIndexes.get(0);
+            if (winnerIndex == currentPlayerIndex) {
+                combo = true;
+            } else {
+                combo = false;
+            }
+            Player winner = players.get(winnerIndex);
+            winner.recordWin();
+            for (Card c : roundPile) {
+                winner.addCard(c);
+            }
+            roundPile.clear();
+            Controller.output("----Player " + (winnerIndex + 1) + " won the round!");
+            if (communalPile.size() != 0) {
+                for (Card c : communalPile) {
+                    winner.addCard(c);
+                }
+                Controller.output("----Those " + communalPile.size() + " cards in commual pile belong to him!");
+                communalPile.clear();
+            }
+        }
+
+    }
+
+    private int getCharacterValue(Card drawnCard, int character) {
+        switch (character) {
+            case 1:
+                return drawnCard.getSize();
+            case 2:
+                return drawnCard.getSpeed();
+            case 3:
+                return drawnCard.getRange();
+            case 4:
+                return drawnCard.getFirepower();
+            default:
+                return drawnCard.getCargo();
+        }
+    }
+
+    private int decideCharacter() throws IOException {
+        Controller.output("----It is your turn to choose a character to compare. \r\n"
+                + "Please enter a number for:");
+        Controller.output("	1 -- size");
+        Controller.output("	2 -- speed");
+        Controller.output("	3 -- range");
+        Controller.output("	4 -- firepower");
+        Controller.output("	5 -- cargo");
+        Scanner s = new Scanner(System.in);
+        int character = s.nextInt();
+        Controller.output("You chose " + character + "!");
+        return character;
+    }
+
+    private void allocateCards() throws IOException {
+        int count = 0;
+        int cardAmount = cards.size();
+        for (int i = 0; i < cardAmount; i++) {
+            int cardIndex = new Random().nextInt(cards.size());
+            players.get(count++ % numberOfPlayers).addCard(cards.remove(cardIndex));
+        }
+        for (Player p : players) {
+            p.reverseCards();
+        }
+        Controller.output("----------Cards shuffled!----------");
+    }
+
+    /**
+     * Read the .txt document, get all cards and store them into ArrayList.
+     *
+     * @throws Exception
+     */
+    private void getCards() throws Exception {
+        BufferedReader br = new BufferedReader(new FileReader(new File("./StarCitizenDeck.txt")));
+
+        // Store the readings.
+        String s = "";
+
+        // Read to jump over the header line.
+        s = br.readLine();
+        header = s.split(" ");
+
+        // Read the data, generate the cards and store into ArrayList.
+        while ((s = br.readLine()) != null) {
+            cards.add(new Card(s));
+        }
+    }
+
+    public boolean getEnded() {
+        return ended;
+    }
+
+    public int getInitialPlayer() {
+        return initialPlayerIndex + 1;
+    }
+
+    public ArrayList<Integer> getRoundNumbers() {
+        ArrayList<Integer> roundNumbers = new ArrayList<Integer>();
+        roundNumbers.add(totalRound);
+        roundNumbers.add(players.get(currentPlayerIndex).getPlayerID());
+        for(Player p : players){
+            roundNumbers.add(p.getPlayerID());
+        }
+        return roundNumbers;
+    }
+
+    public void chooseCharacter(int character) throws IOException {
+        compare(character);
+        check();
+    }
+
+
+    public String showResult() throws IOException {
+        if(equaled){
+            return "Result: Draw!";
+        }else if(winnerIndex == 0){
+            return "Result: You won!";
+        }else {
+            return "Result: AI Player " + winnerIndex + " won!";
+        }
+
+    }
+
+    public ArrayList<String> showWinner() throws IOException {
+        ArrayList<String> s = new ArrayList<String>();
+        if(!ended){
+            for(Player p : players){
+                s.add(p.cardLeft());
+            }
+            compRoundInfo();
+            provideCards();
+        }else{
+            compRoundInfo();
+            switch (players.get(0).getPlayerID()){
+                case 1:
+                    s.add("Yeah! You won the game!");
+                    break;
+                default:
+                    s.add("Oh NO! AI Player " + (players.get(0).getPlayerID()-1) + " won the game!.");
+            }
+        }
+        return  s;
+    }
 }

@@ -113,14 +113,20 @@ public class GameStatistics {
 	
 	@Override
 	public String toString() {
+		String scores = "   You: " + player1Wins + "\r\n" +
+				"   AI Player 1: " + player2Wins + "\r\n";
+		if(player3Wins != -1){
+			scores += "   AI Player 2: " + player3Wins + "\r\n";
+		}
+		if(player4Wins != -1){
+			scores += "   AI Player 3: " + player4Wins + "\r\n";
+		}
+		if(player5Wins != -1){
+			scores += "   AI Player 4: " + player5Wins + "\r\n";
+		}
 		return "Game Statistics:\r\n" +
-				"Number of Players: " + numberOfPlayers +
-				"Scores:\r\n" + 
-				"   You: " + player1Wins + "\r\n" + 
-				"   AI Player 1: " + player2Wins + "\r\n" + 
-				"   AI Player 2: " + player3Wins + "\r\n" + 
-				"   AI Player 4: " + player4Wins + "\r\n" + 
-				"   AI Player 3: " + player5Wins + "";
+				"Number of Players: " + numberOfPlayers + "\r\n" +
+				"Scores:\r\n" + scores;
 	}
 	
 }

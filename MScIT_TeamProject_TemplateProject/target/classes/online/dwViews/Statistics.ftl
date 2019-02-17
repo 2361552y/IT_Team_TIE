@@ -25,7 +25,37 @@
     	<div class="container">
 
 			<!-- Add your HTML Here -->
+			<div class="Top">
+				<div class="row">
+					<div class="col-sm-2 col-md-2 "></div>
+					<div class="col-sm-8 col-md-8 " style="background-color: black;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #9e7d86;">
+						<p><ul class="nav nav-tabs"><li class="active"><a href="http://localhost:7777/toptrumps">Top trumps game</a></li></ul></p>
+					</div>
+					<div class="col-sm-2 col-md-2 "></div>
+				</div>
+
+			</div>
+			<!--selection-->
+			<br />
+			<div class="Middle">
+				<div class="row">
+					<!--blank div-->
+					<div class="col-sm-2 col-md-2 "></div>
+					<!-- game statistics-->
+					<div class="col-sm-8 col-md-8 ">
+						<div class="list-group">
+							<a id="title" class="list-group-item"></a>
+							<a id="game"class="list-group-item"></a>
+							<a id="win" class="list-group-item"></a>
+							<a id="AIwin" class="list-group-item"></a>
+							<a id="AVGdraw" class="list-group-item "></a>
+							<a id="longest" class="list-group-item "></a>
+						</div>
+					</div>
+				</div>
+			</div>
 		
+	
 		</div>
 		
 		<script type="text/javascript">
@@ -38,8 +68,9 @@
 				// --------------------------------------------------------------------------
 				
 				// For example, lets call our sample methods
-				helloJSONList();
-				helloWord("Student");
+				/* helloJSONList();
+				helloWord("Student"); */ 
+				getStats();
 				
 			}
 			
@@ -76,9 +107,34 @@
 		
 		<!-- Here are examples of how to call REST API Methods -->
 		<script type="text/javascript">
-		
+			// This calls the getStats REST method from TopTrumpsRESTAPI
+			function getStats() {
+
+				// First create a CORS request, this is the message we are going to send (a get request in this case)
+				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/getStats"); // Request type and URL
+
+				// Message is not sent yet, but we can check that the browser supports CORS
+				if (!xhr) {
+					alert("CORS not supported");
+				}
+
+				// CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
+				// to do when the response arrives
+				xhr.onload = function(e) {
+					var stats = JSON.parse(xhr.response); // the text of the response
+					var lists = document.getElementsByClassName("list-group-item");
+					for(var i=0; i<lists.length;i++){
+						lists.item(i).innerText = stats[i];
+					}
+					/* return responseText; */ // lets produce an alert
+				};
+
+				xhr.send();
+
+				// We have done everything we need to prepare the CORS request, so send it
+			}
 			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
-			function helloJSONList() {
+			/* function helloJSONList() {
 			
 				// First create a CORS request, this is the message we are going to send (a get request in this case)
 				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloJSONList"); // Request type and URL
@@ -97,10 +153,10 @@
 				
 				// We have done everything we need to prepare the CORS request, so send it
 				xhr.send();		
-			}
+			}  */
 			
 			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
-			function helloWord(word) {
+			/* function helloWord(word) {
 			
 				// First create a CORS request, this is the message we are going to send (a get request in this case)
 				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloWord?Word="+word); // Request type and URL+parameters
@@ -119,7 +175,7 @@
 				
 				// We have done everything we need to prepare the CORS request, so send it
 				xhr.send();		
-			}
+			} */
 
 		</script>
 		
