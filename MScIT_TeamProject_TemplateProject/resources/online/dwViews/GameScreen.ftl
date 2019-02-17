@@ -56,11 +56,11 @@
             <div  class="col-sm-2 col-md-2 ">
                 <div id="selections" class="list-group">
                     <a id="currentPlayer">The active player is </a>
-                    <a id="s1" onclick="humanChoose(1)" href="##" class="list-group-item">Select: Size</a>
-                    <a id="s2" onclick="humanChoose(2)" href="##" class="list-group-item">Select: Speed</a>
-                    <a id="s3" onclick="humanChoose(3)" href="##" class="list-group-item ">Select: Range</a>
-                    <a id="s4" onclick="humanChoose(4)" href="##" class="list-group-item ">Select: Firepower</a>
-                    <a id="s5" onclick="humanChoose(5)" href="##" class="list-group-item ">Select: Cargo</a>
+                    <a id="s1" onclick="humanChoose(1)" href="#" class="list-group-item">Select: Size</a>
+                    <a id="s2" onclick="humanChoose(2)" href="#" class="list-group-item">Select: Speed</a>
+                    <a id="s3" onclick="humanChoose(3)" href="#" class="list-group-item ">Select: Range</a>
+                    <a id="s4" onclick="humanChoose(4)" href="#" class="list-group-item ">Select: Firepower</a>
+                    <a id="s5" onclick="humanChoose(5)" href="#" class="list-group-item ">Select: Cargo</a>
                 </div>
             </div>
             <!--second list: player card-->
@@ -120,7 +120,7 @@
         <div id="player34" class="row">
             <div class="col-sm-6 col-md-6 "></div>
             <!--AI3-->
-            <div class="col-sm-2 col-md-2 ">
+            <div id="ai3" class="col-sm-2 col-md-2 ">
                 <ul class="list-group">
                     <a class="list-group-item active">AI player3</a>
                     <a id="ai3cname" class="list-group-item">Card name(js)</a>
@@ -159,12 +159,10 @@
 </div>
 
 <script type="text/javascript">
-    var roundCards;
-    var roundNumbers;
     var middle = document.getElementById("middle");
     var bottom = document.getElementById("bottom");
     var player012 = document.getElementById("player012");
-    var player34 = document.getElementById("player34");
+
 
     // Method that is called on page load
     function initalize() {
@@ -172,6 +170,8 @@
         // --------------------------------------------------------------------------
         // You can call other methods you want to run when the page first loads here
         // --------------------------------------------------------------------------
+
+
         getRoundCards();
         getRoundNumbers();
     }
@@ -193,10 +193,17 @@
         // CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
         // to do when the response arrives
         xhr.onload = function (e) {
-            roundCards = JSON.parse(xhr.response); // the text of the response
-
+            player012.style.display = "none";
+            bottom.style.display = "none";
+            document.getElementById("ai4").style.display = "none";
+            document.getElementById("ai3").style.display = "none";
+            document.getElementById("ai2").style.display = "none";
+            document.getElementById("user").style.display = "none";
+            document.getElementById("ai1").style.display = "none";
+            var roundCards = JSON.parse(xhr.response); // the text of the response
             switch (roundCards.length) {
                 case 5:
+                    document.getElementById("ai4").style.display = "";
                     document.getElementById("ai4cname").innerHTML = "Card name: " + roundCards[4][1];
                     document.getElementById("ai4ci").src = "http://dcs.gla.ac.uk/~richardm/TopTrumps/" + roundCards[4][1] + ".jpg";
                     document.getElementById("ai4c1").innerHTML = "Size: " + roundCards[4][2];
@@ -205,6 +212,7 @@
                     document.getElementById("ai4c4").innerHTML = "Firepower: " + roundCards[4][5];
                     document.getElementById("ai4c5").innerHTML = "Cargo: " + roundCards[4][6];
                 case 4:
+                    document.getElementById("ai3").style.display = "";
                     document.getElementById("ai3cname").innerHTML = "Card name: " + roundCards[3][1];
                     document.getElementById("ai3ci").src = "http://dcs.gla.ac.uk/~richardm/TopTrumps/" + roundCards[3][1] + ".jpg";
                     document.getElementById("ai3c1").innerHTML = "Size: " + roundCards[3][2];
@@ -213,6 +221,7 @@
                     document.getElementById("ai3c4").innerHTML = "Firepower: " + roundCards[3][5];
                     document.getElementById("ai3c5").innerHTML = "Cargo: " + roundCards[3][6];
                 case 3:
+                    document.getElementById("ai2").style.display = "";
                     document.getElementById("ai2cname").innerHTML = "Card name: " + roundCards[2][1];
                     document.getElementById("ai2ci").src = "http://dcs.gla.ac.uk/~richardm/TopTrumps/" + roundCards[2][1] + ".jpg";
                     document.getElementById("ai2c1").innerHTML = "Size: " + roundCards[2][2];
@@ -221,6 +230,7 @@
                     document.getElementById("ai2c4").innerHTML = "Firepower: " + roundCards[2][5];
                     document.getElementById("ai2c5").innerHTML = "Cargo: " + roundCards[2][6];
                 case 2:
+                    document.getElementById("user").style.display = "";
                     document.getElementById("usercname").innerHTML = "Card name: " + roundCards[0][1];
                     document.getElementById("userci").src = "http://dcs.gla.ac.uk/~richardm/TopTrumps/" + roundCards[0][1] + ".jpg";
                     document.getElementById("userc1").innerHTML = "Size: " + roundCards[0][2];
@@ -228,6 +238,7 @@
                     document.getElementById("userc3").innerHTML = "Range: " + roundCards[0][4];
                     document.getElementById("userc4").innerHTML = "Firepower: " + roundCards[0][5];
                     document.getElementById("userc5").innerHTML = "Cargo: " + roundCards[0][6];
+                    document.getElementById("ai1").style.display = "";
                     document.getElementById("ai1cname").innerHTML = "Card name: " + roundCards[1][1];
                     document.getElementById("ai1ci").src = "http://dcs.gla.ac.uk/~richardm/TopTrumps/" + roundCards[1][1] + ".jpg";
                     document.getElementById("ai1c1").innerHTML = "Size: " + roundCards[1][2];
@@ -237,8 +248,6 @@
                     document.getElementById("ai1c5").innerHTML = "Cargo: " + roundCards[1][6];
                     break;
             }
-            player012.style.display = "none";
-            player34.style.display = "none";
         }
 
         // We have done everything we need to prepare the CORS request, so send it
@@ -259,13 +268,38 @@
         // CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
         // to do when the response arrives
         xhr.onload = function (e) {
-            //roundNumber + currentPlayerIndex.
-            roundNumbers = JSON.parse(xhr.response); // the text of the response
-            if(roundNumbers[2] == 1){
+            //roundNumber + currentPlayerIndex + PlayerIDs.
+            var roundNumbers = JSON.parse(xhr.response); // the text of the response
+            // if User survived.
+            if(roundNumbers[2] == "1"){
+                //show user's card
                 player012.style.display = "";
-                document.getElementById("user").style.display = "";
                 document.getElementById("ai1").style.display = "none";
                 document.getElementById("ai2").style.display = "none";
+                //else, display all cards.
+            }else {
+                player012.style.display = "";
+                bottom.style.display = "";
+            }
+            // label the cards' owner.
+            for (var i = 2; i<roundNumbers.length; i++){
+                switch (roundNumbers[i]) {
+                    case "1":
+                        document.getElementsByClassName("list-group-item active").item(i-2).innerHTML = "You";
+                        break;
+                    case "2":
+                        document.getElementsByClassName("list-group-item active").item(i-2).innerHTML = "AI Player 1";
+                        break;
+                    case "3":
+                        document.getElementsByClassName("list-group-item active").item(i-2).innerHTML = "AI Player 2";
+                        break;
+                    case "4":
+                        document.getElementsByClassName("list-group-item active").item(i-2).innerHTML = "AI Player 3";
+                        break;
+                    case "5":
+                        document.getElementsByClassName("list-group-item active").item(i-2).innerHTML = "AI Player 4";
+                        break;
+                }
             }
             document.getElementById("roundNumber").innerHTML="Round " + roundNumbers[0] + ": Players have drawn their cards.";
             var currentPlayerID = roundNumbers[1];
@@ -273,7 +307,9 @@
             if (currentPlayerID == "1") {
                 text = "The active player is </br>You";
                 document.getElementById("s1").innerHTML= "Select Size";
+                document.getElementById("s1").onclick = function () { humanChoose(1);  };
                 document.getElementById("s2").innerHTML= "Select Speed";
+                document.getElementById("s2").onclick = function () { humanChoose(2);  };
                 document.getElementById("s1").style.display = "";
                 document.getElementById("s2").style.display = "";
                 document.getElementById("s3").style.display = "";
@@ -295,6 +331,7 @@
         xhr.send();
     }
     function aiChoose() {
+        document.getElementById("s1").onclick = function () {  };
         var character = parseInt(Math.random()*5,10)+1;
         switch (character) {
             case 1:
@@ -348,9 +385,9 @@
         xhr.onload = function(e) {
             var result = xhr.response; // the text of the response
             player012.style.display = "";
-            player34.style.display = "";
             document.getElementById("ai1").style.display = "";
             document.getElementById("ai2").style.display = "";
+            bottom.style.display = "";
             document.getElementById("roundNumber").innerHTML = result;
             document.getElementById("s1").style.display = "none";
             document.getElementById("s2").onclick = showWinner;
@@ -370,21 +407,37 @@
         // CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
         // to do when the response arrives
         xhr.onload = function (e) {
+            player012.style.display = "";
             document.getElementById("user").style.display = "none";
             document.getElementById("ai1").style.display = "none";
             document.getElementById("ai2").style.display = "none";
-            player34.style.display = "none";
+            bottom.style.display = "none";
             var responseText = JSON.parse(xhr.response); // the text of the response
             if(responseText.length == 1){
-                middle.style.display = "none";
+                document.getElementById("s1").style.display = "";
+                document.getElementById("roundNumber").innerHTML = responseText[0];
+                document.getElementById("s1").innerHTML = "Update Database";
+                document.getElementById("s2").onclick = updateDatabase;
             }else {
-                document.getElementById("s2").onclick = initalize;
+                document.getElementById("s2").onclick = function () { getRoundCards();getRoundNumbers(); };
             }
             document.getElementById("roundNumber").innerHTML = responseText;
         };
 
         // We have done everything we need to prepare the CORS request, so send it
         xhr.send();
+    }
+    function updateDatabase() {
+        var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/updateDatabase"); // Request type and URL+parameters
+
+        if (!xhr) {
+            alert("CORS not supported");
+        }
+        xhr.onload = function(e) {
+            alert(xhr.response); // the text of the response
+        };
+        xhr.send();
+        window.location.href= 'http://localhost:7777/toptrumps';
     }
     // This is a reusable method for creating a CORS request. Do not edit this.
     function createCORSRequest(method, url) {

@@ -108,6 +108,12 @@ public class TopTrumpsRESTAPI {
 		String json = oWriter.writeValueAsString(s);
 		return json;
 	}
+	@GET
+	@Path("/updateDatabase")
+	public String updateDatabase() throws IOException, ClassNotFoundException, SQLException {
+		model.end();
+		return "Database updated!";
+	}
 //	@GET
 //	@Path("/helloJSONList")
 //	/**

@@ -12,7 +12,8 @@ public class JDBC {
 		if (connection == null) {
 			// load the JDBC driver for Postgresql
 			Class.forName("org.postgresql.Driver");
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/topTrumps", "postgres", "999999");
+//			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/topTrumps", "postgres", "999999");
+			connection = DriverManager.getConnection("jdbc:postgresql://lyacata.dcs.gla.ac.uk:5432/m_18_2361552y", "m_18_2361552y", "2361552y");
 		}
 	}
 

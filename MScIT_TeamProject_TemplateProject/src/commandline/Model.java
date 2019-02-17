@@ -319,7 +319,7 @@ public class Model {
 
     public String showResult() throws IOException {
         if(equaled){
-            return "Result: Draw!";
+            return "Result: Draw! There are " + communalPile.size() + " cards in the communal pile.";
         }else if(winnerIndex == 0){
             return "Result: You won!";
         }else {

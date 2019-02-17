@@ -99,7 +99,7 @@ public class Player {
 				if(!isFailed()){
 					s = "AI Player " + (playerID-1) + " has " +getPlayerCards().size()+ " cards left.";
 				}else {
-					s = "AI Player lost!";
+					s = "AI Player " + (playerID-1) + " lost!";
 				}
 				return  s;
 		}
